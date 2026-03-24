@@ -60,6 +60,10 @@ server.get(
 // JWT authentication hook
 server.addHook("preHandler", async function (request: any, reply: any) {
   try {
+    const path = String(request.url).split("?")[0];
+    if (request.method === "GET" && path === "/") {
+      return true;
+    }
     if (request.url === "/api/v1/auth/login" && request.method === "POST") {
       return true;
     }
