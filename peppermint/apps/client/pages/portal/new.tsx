@@ -17,7 +17,7 @@ import useTranslation from "next-translate/useTranslation";
 import { useUser } from "../../store/session";
 import { toast } from "@/shadcn/hooks/use-toast";
 
-// 电商客服工单类型
+// E-commerce ticket types
 const type = [
   { id: 1, name: "support" },
   { id: 2, name: "refund" },
@@ -315,7 +315,7 @@ export default function ClientTicketNew() {
                 </h3>
                 <div className="mt-2 text-sm text-white">
                   <p>
-                    您的工单已提交，客服将尽快与您联系。
+                    Your ticket has been submitted. Our team will get back to you soon.
                   </p>
                 </div>
                 {/* <div className="mt-4">

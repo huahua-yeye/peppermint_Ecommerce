@@ -7,7 +7,7 @@ import { AuthService } from "./auth.service";
 
 function getReplyText(email: any): string {
   const parsed = new EmailReplyParser().read(email.text);
-  // v2+ 使用 getVisibleText()，等价于过滤掉隐藏/签名/引用片段
+  // v2+ getVisibleText() strips hidden/signature/quoted fragments
   return typeof parsed.getVisibleText === "function"
     ? parsed.getVisibleText()
     : parsed

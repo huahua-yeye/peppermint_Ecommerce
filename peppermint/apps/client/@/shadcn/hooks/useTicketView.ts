@@ -117,13 +117,13 @@ export function useTicketView(tickets: Ticket[] = []) {
       case 'type': {
         const ecoTypes = ['refund','shipping','product_inquiry','order_issue','return_exchange','payment','support'];
         const ecommerceTypeCols = [
-          { id: 'refund', title: '退款售后', color: 'bg-red-500' },
-          { id: 'shipping', title: '物流配送', color: 'bg-blue-500' },
-          { id: 'product_inquiry', title: '商品咨询', color: 'bg-green-500' },
-          { id: 'order_issue', title: '订单问题', color: 'bg-orange-500' },
-          { id: 'return_exchange', title: '退换货', color: 'bg-purple-500' },
-          { id: 'payment', title: '支付问题', color: 'bg-yellow-500' },
-          { id: 'support', title: '一般咨询', color: 'bg-teal-500' },
+          { id: 'refund', title: 'Refund', color: 'bg-red-500' },
+          { id: 'shipping', title: 'Shipping', color: 'bg-blue-500' },
+          { id: 'product_inquiry', title: 'Product', color: 'bg-green-500' },
+          { id: 'order_issue', title: 'Order', color: 'bg-orange-500' },
+          { id: 'return_exchange', title: 'Return / exchange', color: 'bg-purple-500' },
+          { id: 'payment', title: 'Payment', color: 'bg-yellow-500' },
+          { id: 'support', title: 'General', color: 'bg-teal-500' },
         ];
         const typeCols = ecommerceTypeCols.map(tt => ({
           ...tt,
@@ -131,7 +131,7 @@ export function useTicketView(tickets: Ticket[] = []) {
         }));
         const otherTickets = sortedTickets.filter(t => !ecoTypes.includes(t.type));
         if (otherTickets.length > 0) {
-          typeCols.push({ id: 'other', title: '其他', color: 'bg-gray-500', tickets: otherTickets });
+          typeCols.push({ id: 'other', title: 'Other', color: 'bg-gray-500', tickets: otherTickets });
         }
         return typeCols;
       }

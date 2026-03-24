@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "登录", href: "/auth/login" },
-  { name: "文档", href: "https://docs.peppermint.sh/" },
+  { name: "Sign in", href: "/auth/login" },
+  { name: "Docs", href: "https://docs.peppermint.sh/" },
 ];
 
 // const footer = {
@@ -113,23 +113,23 @@ const stats = [
 
 const features = [
   {
-    name: "退款售后",
+    name: "Refunds & after-sales",
     description:
-      "高效处理退款、售后申请，支持工单流转与状态跟踪，提升售后处理效率。",
+      "Handle refunds and after-sales requests with clear ticket workflows and status tracking.",
     href: "#",
     icon: Bell,
   },
   {
-    name: "物流配送",
+    name: "Shipping & delivery",
     description:
-      "集中管理物流咨询工单，支持快递追踪、配送异常处理，快速响应客户物流问题。",
+      "Centralize shipping tickets, tracking questions, and delivery exceptions in one place.",
     href: "#",
     icon: Inbox,
   },
   {
-    name: "订单关联",
+    name: "Order linking",
     description:
-      "工单可关联订单信息，客服一目了然客户购买记录，提供更精准的服务。",
+      "Link tickets to orders so agents see purchase context and respond accurately.",
     href: "#",
     icon: Lock,
   },
@@ -137,27 +137,27 @@ const features = [
 
 const features2 = [
   {
-    name: "多场景支持",
+    name: "Full e-commerce coverage",
     description:
-      "支持商品咨询、订单问题、退换货、支付问题等电商全场景客服工单管理。",
+      "Product questions, order issues, returns, and payment problems in one helpdesk.",
     icon: Globe,
   },
   {
-    name: "客户信息",
+    name: "Customer profiles",
     description:
-      "客户档案集中管理，支持收货地址等信息，便于客服快速了解客户背景。",
+      "Customer records with shipping addresses so agents understand context quickly.",
     icon: Lock,
   },
   {
-    name: "高效协作",
+    name: "Team collaboration",
     description:
-      "工单分配、团队协作、优先级管理，确保每个客户咨询都能得到及时响应。",
+      "Assignment, teams, and priorities so every conversation gets a timely response.",
     icon: Lightbulb,
   },
   {
-    name: "客户优先",
+    name: "Customer-first",
     description:
-      "以客户体验为核心，助力电商企业提升客户满意度，促进复购与口碑传播。",
+      "Built around customer experience to improve satisfaction and repeat business.",
     icon: User,
   },
 ];
@@ -171,7 +171,7 @@ export default function Home() {
             <div className="-m-1.5 p-1.5">
               <span className="sm:hidden">🛒</span>
               <span className="hidden sm:block font-bold text-xl">
-                电商客服中心
+                E-Commerce Helpdesk
               </span>
             </div>
           </div>
@@ -198,9 +198,9 @@ export default function Home() {
                 className="inline-flex space-x-6"
               >
                 <span className="rounded-full bg-indigo-500/10 px-3 py-1 text-sm font-semibold leading-6 text-indigo-400 ring-1 ring-inset ring-indigo-500/20">
-                  立即使用 -
+                  Get started —
                   <span className="ml-1 inline-flex items-center space-x-2 text-sm font-medium leading-6 ">
-                    <span className="text-sm">登录客服中心</span>
+                    <span className="text-sm">Sign in to helpdesk</span>
                     <ChevronRight
                       className="h-5 w-5 text-gray-500"
                       aria-hidden="true"
@@ -213,13 +213,13 @@ export default function Home() {
 
           <div className="">
             <span className="text-2xl font-bold tracking-tight text-gray-900 ">
-              电商客服中心 - 一站式客服工单管理系统
+              E-Commerce Helpdesk — ticket management for online stores
             </span>
             <div className="mt-4 flex flex-col ">
               <div className="">
                 <p className="text-base text-gray-800">
-                  专为电商场景打造的客服工单系统，支持订单咨询、退款售后、物流配送、退换货等全流程工单管理。
-                  帮助客服团队高效处理客户咨询，提升客户满意度。
+                  A helpdesk tailored for e-commerce: orders, refunds, shipping, returns, and
+                  product questions in one workflow so your team resolves issues faster.
                 </p>
               </div>
               <div className="my-6 space-x-4 flex flex-row">
@@ -227,7 +227,7 @@ export default function Home() {
                   href="/auth/login"
                   className="rounded-md w-full px-3.5 py-2.5 text-sm font-semibold bg-green-600  text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                 >
-                  登录客服中心
+                  Sign in to helpdesk
                 </a>
               </div>
             </div>
@@ -301,17 +301,17 @@ export default function Home() {
       <div className="bg-white mb-4 mx-auto max-w-xl ">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
           <h2 className="text-xl font-bold tracking-tight text-gray-900 ">
-            我们的使命
+            Our mission
           </h2>
           <div className="mt-2 flex flex-col gap-x-8 gap-y-20 lg:flex-row">
             <div className="lg:w-full lg:max-w-2xl lg:flex-auto">
               <p className="text-base text-gray-800">
-                电商客服中心致力于为电商企业提供专业、高效的客服工单管理解决方案，
-                覆盖从售前咨询到售后服务的全流程支持。
+                We help online retailers run a professional, efficient support desk from
+                pre-sale questions through post-purchase care.
               </p>
               <p className="mt-4 max-w-xl text-base  text-gray-700">
-                以客户满意为核心，通过智能工单分配、多渠道接入、知识库支持等功能，
-                帮助客服团队提升响应速度与解决效率，助力电商业务增长。
+                Smart assignment, multi-channel intake, and knowledge base tools help your
+                team respond faster and grow with confidence.
               </p>
             </div>
           </div>
@@ -423,7 +423,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
           <div className="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 lg:mt-24">
             <p className="text-xs leading-5 text-gray-500">
-              &copy; 2024 电商客服中心. 基于 Peppermint 开源项目定制.
+              &copy; 2024 E-Commerce Helpdesk. Based on the open-source Peppermint project.
             </p>
           </div>
         </div>

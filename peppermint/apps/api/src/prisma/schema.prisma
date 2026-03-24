@@ -123,10 +123,10 @@ model Order {
   id           String   @id @default(uuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())
-  orderNumber  String   @unique  // 订单号
+  orderNumber  String   @unique
   totalAmount  Decimal  @db.Decimal(10, 2)
-  status       String   @default("pending")  // pending/paid/shipped/delivered/refunded
-  items        Json?    // 订单商品明细
+  status       String   @default("pending") // pending/paid/shipped/delivered/refunded
+  items        Json?
 
   clientId     String?
   client       Client?   @relation(fields: [clientId], references: [id])
@@ -164,7 +164,7 @@ model Ticket {
   clientId   String?
   userId     String?
   order      Order?  @relation(fields: [orderId], references: [id])
-  orderId    String?  // 关联订单 (电商工单，一个订单可有多个工单)
+  orderId    String?
 
   knowledgeBase knowledgeBase[]
   notifications notifications[]
@@ -213,7 +213,7 @@ model Client {
   contactName    String
   number         String?
   notes          String?
-  shippingAddress String?       // 收货地址 (电商)
+  shippingAddress String?
   tickets        Ticket[]
   orders         Order[]
   active         Boolean        @default(true)
@@ -442,13 +442,13 @@ enum TicketStatus {
 }
 
 enum TicketType {
-  support          // 一般客服
-  refund           // 退款售后
-  shipping         // 物流配送
-  product_inquiry  // 商品咨询
-  order_issue      // 订单问题
-  return_exchange  // 退换货
-  payment          // 支付问题
+  support
+  refund
+  shipping
+  product_inquiry
+  order_issue
+  return_exchange
+  payment
   bug
   feature
   incident

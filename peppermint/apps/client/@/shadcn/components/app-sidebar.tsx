@@ -31,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const [keypressdown, setKeyPressDown] = useState(false);
 
-  const { t, lang } = useTranslation("peppermint");
+  const { t } = useTranslation("peppermint");
   const sidebar = useSidebar();
 
   if (!user) {
@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <img src="/favicon/favicon-32x32.png" className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold text-xl">{t("app_name") || "电商客服"}</span>
+            <span className="truncate font-semibold text-xl">{t("app_name") || "E-Commerce Helpdesk"}</span>
             <span className="truncate text-xs">
               version: {process.env.NEXT_PUBLIC_CLIENT_VERSION}
             </span>

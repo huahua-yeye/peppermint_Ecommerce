@@ -17,7 +17,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-// 电商客服工单类型
+// E-commerce ticket types
 const type = [
   { id: 1, name: "support" },
   { id: 2, name: "refund" },
@@ -29,7 +29,7 @@ const type = [
 ];
 
 export default function CreateTicketModal({ keypress, setKeyPressDown }) {
-  const { t, lang } = useTranslation("peppermint");
+  const { t } = useTranslation("peppermint");
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
@@ -118,7 +118,7 @@ export default function CreateTicketModal({ keypress, setKeyPressDown }) {
           toast({
             variant: "default",
             title: "Success",
-            description: t("ticket_create") + " " + (lang === "zh-CN" ? "成功" : "success"),
+            description: `${t("ticket_create")} successful`,
           });
           router.push("/issues");
         } else {

@@ -172,7 +172,7 @@ export default function PortalLayout({ children }: any) {
                       {/* <img className="h-8 w-auto" src="/logo.svg" alt="Workflow" /> */}
                       <Link href="/portal">
                         <span className="text-3xl ml-2  hover:text-green-600 font-bold ">
-                          {t("app_name") || "电商客服中心"}
+                          {t("app_name") || "E-Commerce Helpdesk"}
                         </span>
                       </Link>
                     </div>
@@ -238,7 +238,7 @@ export default function PortalLayout({ children }: any) {
               {/* <img className="h-8 w-auto" src="/logo.svg" alt="Workflow" /> */}
               <Link href="/portal">
                 <span className="text-3xl ml-2  hover:text-green-600 font-bold ">
-                  {t("app_name") || "电商客服中心"}
+                  {t("app_name") || "E-Commerce Helpdesk"}
                 </span>
               </Link>
             </div>

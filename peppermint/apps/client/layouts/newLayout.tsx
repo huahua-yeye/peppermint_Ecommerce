@@ -184,7 +184,7 @@ export default function NewLayout({ children }: any) {
                     <div className="flex align-middle flex-row h-14 items-center border-b-[1px]">
                       <Link href="/">
                         <span className="text-3xl ml-2 text-green-500  hover:text-green-600 font-bold ">
-                          {t("app_name") || "电商客服中心"}
+                          {t("app_name") || "E-Commerce Helpdesk"}
                         </span>
                       </Link>
                     </div>
@@ -311,7 +311,7 @@ export default function NewLayout({ children }: any) {
             <div className="flex align-middle flex-row h-14 items-center border-b-[1px] px-6">
               <Link href="/">
                 <span className="text-3xl ml-2 text-green-500 hover:text-green-600 font-bold">
-                  {t("app_name") || "电商客服中心"}
+                  {t("app_name") || "E-Commerce Helpdesk"}
                 </span>
               </Link>
             </div>

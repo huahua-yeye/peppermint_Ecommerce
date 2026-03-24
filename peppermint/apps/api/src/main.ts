@@ -81,7 +81,7 @@ server.addHook("preHandler", async function (request: any, reply: any) {
 
 const start = async () => {
   try {
-    // 开发模式下若使用 db:push，migrate deploy 可能失败 (P3005)，此时跳过并继续
+    // In dev with db:push, migrate deploy may fail (P3005); we continue anyway
     const runPrismaSetup = () =>
       new Promise<void>((resolve) => {
         exec("npx prisma migrate deploy", (err, stdout, stderr) => {
@@ -93,7 +93,7 @@ const start = async () => {
 
           exec("npx prisma db seed", (seedErr, seedOut, seedErrOut) => {
             if (seedErr) {
-              console.warn("prisma db seed (可忽略，若已初始化):", seedErr.message);
+              console.warn("prisma db seed (safe to ignore if already initialized):", seedErr.message);
             }
             if (seedOut) console.log(seedOut);
             resolve();
