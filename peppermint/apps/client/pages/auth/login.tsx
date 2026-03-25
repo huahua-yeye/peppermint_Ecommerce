@@ -15,36 +15,66 @@ export default function Login({}) {
 
   async function postData() {
     try {
-      await fetch(`/api/v1/auth/login`, {
+      const res = await fetch(`/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      })
-        .then((res) => res.json())
-        .then(async (res) => {
-          if (res.user) {
-            setCookie("session", res.token);
-            if (res.user.external_user) {
-              router.push("/portal");
-            } else {
-              router.push("/");
-            }
-          } else {
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description:
-                "There was an error logging in, please try again. If this issue persists, please contact support via the discord.",
-            });
-          }
+      });
+
+      const text = await res.text();
+      let data: {
+        user?: unknown;
+        token?: string;
+        message?: string;
+      } = {};
+      if (text) {
+        try {
+          data = JSON.parse(text) as typeof data;
+        } catch {
+          toast({
+            variant: "destructive",
+            title: "Server error",
+            description: `Login API returned HTTP ${res.status} with a non-JSON body. Check the API process logs (port 5003) or Docker logs for the real error.`,
+          });
+          return;
+        }
+      }
+
+      if (!res.ok) {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description:
+            data.message ||
+            `Request failed with HTTP ${res.status}. See API logs for details.`,
         });
+        return;
+      }
+
+      if (data.user && data.token) {
+        setCookie("session", data.token);
+        const user = data.user as { external_user?: boolean };
+        if (user.external_user) {
+          router.push("/portal");
+        } else {
+          router.push("/");
+        }
+        return;
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          "There was an error logging in, please try again. If this issue persists, please contact support via the discord.",
+      });
     } catch (error) {
       console.error(error);
       toast({
         variant: "destructive",
-        title: "Database Error",
+        title: "Network error",
         description:
-          "This is an issue with the database, please check the docker logs or contact support via discord.",
+          "Could not reach the login API. Confirm the client can proxy to the API (e.g. API on port 5003) and try again.",
       });
     }
   }

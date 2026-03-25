@@ -316,10 +316,9 @@ export function authRoutes(fastify: FastifyInstance) {
       const isPasswordValid = await bcrypt.compare(password, user!.password);
 
       if (!isPasswordValid) {
-        reply.code(401).send({
+        return reply.code(401).send({
           message: "Invalid email or password",
         });
-        throw new Error("Password is not valid");
       }
 
       // Generate a secure session token

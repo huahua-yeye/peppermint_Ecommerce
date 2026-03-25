@@ -30,22 +30,32 @@ import GlobalShortcut from "@/shadcn/block/GlobalShortcut";
 import { Toaster } from "@/shadcn/ui/toaster";
 
 import { SidebarProvider } from "@/shadcn/ui/sidebar";
+import { Loader2 } from "lucide-react";
 
 const queryClient = new QueryClient();
 
 function Auth({ children }: any) {
   const { loading, user } = useUser();
 
-  React.useEffect(() => {
-    if (loading) return; 
-  }, [user, loading]);
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2
+          className="h-8 w-8 animate-spin text-muted-foreground"
+          aria-label="Loading"
+        />
+      </div>
+    );
+  }
 
   if (user) {
     return children;
   }
 
   return (
-    <div className="flex h-screen justify-center items-center text-green-600"></div>
+    <div className="flex h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+      Redirecting to sign in…
+    </div>
   );
 }
 

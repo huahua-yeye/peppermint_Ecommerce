@@ -1,4 +1,5 @@
 // next.config.js
+const path = require('path');
 const withPlugins = require('next-compose-plugins');
 const removeImports = require('next-remove-imports')();
 const nextTranslate = require('next-translate');
@@ -6,7 +7,8 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: false,
+  // Dev + next-pwa + watch runs GenerateSW twice and breaks SWC/webpack cache (see workbox#1790)
+  disable: process.env.NODE_ENV === 'development',
 });
 
 module.exports = withPlugins(
@@ -15,6 +17,9 @@ module.exports = withPlugins(
     reactStrictMode: false,
     swcMinify: true,
     output: 'standalone',
+    experimental: {
+      outputFileTracingRoot: path.join(__dirname, '../..'),
+    },
 
     async rewrites() {
       let apiBase =

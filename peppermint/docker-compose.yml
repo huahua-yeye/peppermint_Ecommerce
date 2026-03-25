@@ -26,10 +26,12 @@ services:
     depends_on:
       - peppermint_postgres
     environment:
+      # Prisma 只读 DATABASE_URL；仅设 DB_* 不会连接数据库
+      DATABASE_URL: "postgresql://peppermint:12345@peppermint_postgres:5432/peppermint"
       DB_USERNAME: "peppermint"
       DB_PASSWORD: "12345"
       DB_HOST: "peppermint_postgres"
-      SECRET: 'peppermint4life'
+      SECRET: "peppermint4life"
 
 volumes:
  pgdata_live:

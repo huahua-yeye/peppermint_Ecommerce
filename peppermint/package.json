@@ -20,7 +20,8 @@
   "packageManager": "yarn@4.2.2",
   "resolutions": {
     "next@npm:^14.0.0": "14.2.35",
-    "next@npm:^15.0.0": "15.0.7"
+    "next@npm:^15.0.0": "15.0.7",
+    "prosemirror-view": "1.37.2"
   },
   "dependencies": {
     "fastify": "^5.1.0",

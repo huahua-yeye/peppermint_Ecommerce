@@ -44,7 +44,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.453.0",
     "moment": "^2.29.1",
-    "next": "13.5",
+    "next": "14.2.35",
     "next-compose-plugins": "^2.2.1",
     "next-pwa": "^5.6.0",
     "next-remove-imports": "^1.0.6",
@@ -68,9 +68,13 @@
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.1"
   },
+  "resolutions": {
+    "prosemirror-view": "1.37.2"
+  },
   "devDependencies": {
     "@types/add": "^2",
     "@types/lodash": "^4",
+    "@types/minimatch": "^5.1.2",
     "@types/next": "^9.0.0",
     "@types/next-pwa": "^5",
     "@types/node": "17.0.4",

@@ -2,6 +2,7 @@ import { Button } from "@radix-ui/themes";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 import { AccountDropdown } from "../components/AccountDropdown";
 
@@ -22,66 +23,71 @@ export default function ShadLayout({ children }: any) {
 
   const { t, lang } = useTranslation("peppermint");
 
-  if (!user) {
-    location.push("/auth/login");
-  }
+  useEffect(() => {
+    if (loading || !user) return;
+    if (user.external_user) {
+      location.replace("/portal");
+    }
+  }, [loading, user, location]);
 
-  if (location.pathname.includes("/admin") && user.isAdmin === false) {
-    location.push("/");
-    alert("You do not have the correct perms for that action.");
-  }
+  useEffect(() => {
+    if (loading || !user) return;
+    if (location.pathname.includes("/admin") && user.isAdmin === false) {
+      location.replace("/");
+      alert("You do not have the correct perms for that action.");
+    }
+  }, [loading, user, location.pathname, location]);
 
-  if (user && user.external_user) {
-    location.push("/portal");
+  if (user.external_user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+        Redirecting to portal…
+      </div>
+    );
   }
 
   return (
-    !loading &&
-    user && (
-      <div className="min-h-screen overflow-x-hidden bg-background">
-        <SidebarProvider>
-          <AppSidebar />
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto w-full min-h-svh">
-            <div className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-x-4 border-b bg-background px-4 sm:gap-x-6">
-              <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
-                <SidebarTrigger title="[" />
-                <div className="sm:flex hidden w-full justify-start items-center space-x-6">
-                  <CommandMenu />
-                </div>
+    <div className="min-h-screen overflow-x-hidden bg-background">
+      <SidebarProvider>
+        <AppSidebar />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto w-full min-h-svh">
+          <div className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-x-4 border-b bg-background px-4 sm:gap-x-6">
+            <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
+              <SidebarTrigger title="[" />
+              <div className="sm:flex hidden w-full justify-start items-center space-x-6">
+                <CommandMenu />
+              </div>
 
-                <div className="flex w-full sticky right-0 justify-end items-center gap-x-2 lg:gap-x-2 ">
-                  <Button
-                    variant="outline"
-                    className="relative rounded-md p-2 text-gray-400 hover:text-gray-500 hover:cursor-pointer focus:outline-none"
-                  >
-                    <Link href="/notifications">
-                      <Bell className="h-4 w-4 text-foreground" />
-                      {user.notifcations.filter(
-                        (notification) => !notification.read
-                      ).length > 0 && (
-                        <svg
-                          className="h-2.5 w-2.5 absolute bottom-6 left-6 animate-pulse fill-green-500"
-                          viewBox="0 0 6 6"
-                          aria-hidden="true"
-                        >
-                          <circle cx={3} cy={3} r={3} />
-                        </svg>
-                      )}
-                    </Link>
-                  </Button>
+              <div className="flex w-full sticky right-0 justify-end items-center gap-x-2 lg:gap-x-2 ">
+                <Button
+                  variant="outline"
+                  className="relative rounded-md p-2 text-gray-400 hover:text-gray-500 hover:cursor-pointer focus:outline-none"
+                >
+                  <Link href="/notifications">
+                    <Bell className="h-4 w-4 text-foreground" />
+                    {user.notifcations.filter(
+                      (notification) => !notification.read
+                    ).length > 0 && (
+                      <svg
+                        className="h-2.5 w-2.5 absolute bottom-6 left-6 animate-pulse fill-green-500"
+                        viewBox="0 0 6 6"
+                        aria-hidden="true"
+                      >
+                        <circle cx={3} cy={3} r={3} />
+                      </svg>
+                    )}
+                  </Link>
+                </Button>
 
-                  <AccountDropdown />
-                </div>
+                <AccountDropdown />
               </div>
             </div>
-            {!loading && !user.external_user && (
-              <main className="bg-background min-h-[calc(100svh-3.5rem)]">
-                {children}
-              </main>
-            )}
           </div>
-        </SidebarProvider>
-      </div>
-    )
+          <main className="bg-background min-h-[calc(100svh-3.5rem)]">
+            {children}
+          </main>
+        </div>
+      </SidebarProvider>
+    </div>
   );
 }
