@@ -22,7 +22,7 @@ function getReplyText(email: any): string {
 
 export class ImapService {
   private static async getImapConfig(queue: EmailQueue): Promise<EmailConfig> {
-    switch (queue.serviceType) {
+    switch (String(queue.serviceType || "").toLowerCase()) {
       case "gmail": {
         const validatedAccessToken = await AuthService.getValidAccessToken(
           queue
@@ -129,13 +129,28 @@ export class ImapService {
   static async fetchEmails(): Promise<void> {
     const queues =
       (await prisma.emailQueue.findMany()) as unknown as EmailQueue[];
-    const today = new Date();
+    /** 只拉「未读」且「最近 N 天内」的邮件；原先 UNSEEN + ON(今天) 过严，时区/跨日会导致永远匹配不到 */
+    const since = new Date();
+    since.setDate(since.getDate() - 14);
 
     for (const queue of queues) {
       try {
+        const st = String(queue.serviceType || "").toLowerCase();
+        if (st === "gmail") {
+          const cid = String(queue.clientId ?? "").trim();
+          const cs = String(queue.clientSecret ?? "").trim();
+          const rt = String(queue.refreshToken ?? "").trim();
+          if (!cid || !cs || !rt) {
+            console.warn(
+              `[EmailQueue ${queue.id}] 跳过拉取：Gmail OAuth 不完整（需 clientId、clientSecret、refreshToken）。请在 Admin → Email Queues 删除该队列后重新用 Google 流程创建并完成授权，或删除后改用 Other + 应用专用密码。`
+            );
+            continue;
+          }
+        }
+
         const imapConfig = await this.getImapConfig(queue);
 
-        if (queue.serviceType === "other" && !imapConfig.password) {
+        if (st === "other" && !imapConfig.password) {
           console.error("IMAP configuration is missing a password");
           throw new Error("IMAP configuration is missing a password");
         }
@@ -150,7 +165,8 @@ export class ImapService {
                 reject(err);
                 return;
               }
-              imap.search(["UNSEEN", ["ON", today]], (err, results) => {
+              const searchCriteria: any[] = ["UNSEEN", ["SINCE", since]];
+              imap.search(searchCriteria, (err, results) => {
                 if (err) reject(err);
                 if (!results?.length) {
                   console.log("No new messages");
@@ -160,31 +176,66 @@ export class ImapService {
                 }
 
                 const fetch = imap.fetch(results, { bodies: "" });
+                /** fetch 的 end 会在「取流结束」时立刻触发，早于 simpleParser 异步完成；必须先等每封邮件处理完再 imap.end，否则会断开连接，只处理到第一封 */
+                const perMessage: Promise<void>[] = [];
 
                 fetch.on("message", (msg) => {
-                  msg.on("body", (stream) => {
-                    simpleParser(stream, async (err, parsed) => {
-                      if (err) throw err;
-                      const subjectLower = parsed.subject?.toLowerCase() || "";
-                      const isReply =
-                        subjectLower.includes("re:") ||
-                        subjectLower.includes("ref:");
-                      await this.processEmail(parsed, isReply || false);
-                    });
-                  });
+                  perMessage.push(
+                    new Promise<void>((resolveMsg) => {
+                      let attrs: { uid: number } | undefined;
+                      let bodyFinished = false;
 
-                  msg.once("attributes", (attrs) => {
-                    imap.addFlags(attrs.uid, ["\\Seen"], () => {
-                      console.log("Marked as read!");
-                    });
-                  });
+                      const tryMarkSeenAndResolve = () => {
+                        if (!attrs || !bodyFinished) return;
+                        imap.addFlags(attrs.uid, ["\\Seen"], () => {
+                          console.log("Marked as read uid=", attrs!.uid);
+                          resolveMsg();
+                        });
+                      };
+
+                      msg.once("attributes", (a) => {
+                        attrs = a as { uid: number };
+                        tryMarkSeenAndResolve();
+                      });
+
+                      msg.on("body", (stream) => {
+                        simpleParser(stream, async (err, parsed) => {
+                          try {
+                            if (err) {
+                              console.error("simpleParser error:", err);
+                              return;
+                            }
+                            const subj = parsed.subject || "";
+                            const hasTicketUuid =
+                              /(?:ref:|#)([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i.test(
+                                subj
+                              );
+                            await ImapService.processEmail(parsed, hasTicketUuid);
+                          } catch (e) {
+                            console.error("processEmail failed:", e);
+                          } finally {
+                            bodyFinished = true;
+                            tryMarkSeenAndResolve();
+                          }
+                        });
+                      });
+                    })
+                  );
                 });
 
                 fetch.once("error", reject);
                 fetch.once("end", () => {
-                  console.log("Done fetching messages");
-                  imap.end();
-                  resolve(null);
+                  Promise.all(perMessage)
+                    .then(() => {
+                      console.log("Done fetching and processing all messages");
+                      imap.end();
+                      resolve(null);
+                    })
+                    .catch((e) => {
+                      console.error("fetch batch error:", e);
+                      imap.end();
+                      reject(e);
+                    });
                 });
               });
             });

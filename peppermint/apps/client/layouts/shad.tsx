@@ -38,22 +38,14 @@ export default function ShadLayout({ children }: any) {
   return (
     !loading &&
     user && (
-      <div className="min-h-screen overflow-hidden">
+      <div className="min-h-screen overflow-x-hidden bg-background">
         <SidebarProvider>
           <AppSidebar />
-          <div className="w-full">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto w-full min-h-svh">
             <div className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-x-4 border-b bg-background px-4 sm:gap-x-6">
               <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
                 <SidebarTrigger title="[" />
                 <div className="sm:flex hidden w-full justify-start items-center space-x-6">
-                  {user.isAdmin && (
-                    <Link href="https://github.com/Peppermint-Lab/peppermint/releases">
-                      <span className="inline-flex items-center rounded-md bg-green-700/10 px-3 py-2 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-500/20">
-                        Version {process.env.NEXT_PUBLIC_CLIENT_VERSION}
-                      </span>
-                    </Link>
-                  )}
-
                   <CommandMenu />
                 </div>
 
@@ -78,27 +70,14 @@ export default function ShadLayout({ children }: any) {
                     </Link>
                   </Button>
 
-                  {user.isAdmin && (
-                    <Link
-                      href="https://github.com/Peppermint-Lab/peppermint/discussions"
-                      target="_blank"
-                      className="hover:cursor-pointer"
-                    >
-                      <Button
-                        variant="outline"
-                        className="text-foreground hover:cursor-pointer whitespace-nowrap"
-                      >
-                        Send Feedback
-                      </Button>
-                    </Link>
-                  )}
-
                   <AccountDropdown />
                 </div>
               </div>
             </div>
             {!loading && !user.external_user && (
-              <main className="bg-background min-h-screen">{children}</main>
+              <main className="bg-background min-h-[calc(100svh-3.5rem)]">
+                {children}
+              </main>
             )}
           </div>
         </SidebarProvider>

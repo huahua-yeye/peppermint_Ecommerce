@@ -184,7 +184,7 @@ export default function NewLayout({ children }: any) {
                     <div className="flex align-middle flex-row h-14 items-center border-b-[1px]">
                       <Link href="/">
                         <span className="text-3xl ml-2 text-green-500  hover:text-green-600 font-bold ">
-                          {t("app_name") || "E-Commerce Helpdesk"}
+                          {t("app_name") || "Helpdesk"}
                         </span>
                       </Link>
                     </div>
@@ -311,7 +311,7 @@ export default function NewLayout({ children }: any) {
             <div className="flex align-middle flex-row h-14 items-center border-b-[1px] px-6">
               <Link href="/">
                 <span className="text-3xl ml-2 text-green-500 hover:text-green-600 font-bold">
-                  {t("app_name") || "E-Commerce Helpdesk"}
+                  {t("app_name") || "Helpdesk"}
                 </span>
               </Link>
             </div>
@@ -470,16 +470,6 @@ export default function NewLayout({ children }: any) {
             />
 
             <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
-              <div className="sm:flex hidden w-full justify-start items-center space-x-6">
-                {user.isAdmin && (
-                  <Link href="https://github.com/Peppermint-Lab/peppermint/releases">
-                    <span className="inline-flex items-center rounded-md bg-green-700/10 px-3 py-2 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-500/20">
-                      Version {process.env.NEXT_PUBLIC_CLIENT_VERSION}
-                    </span>
-                  </Link>
-                )}
-              </div>
-
               <div className="flex w-full justify-end items-center gap-x-2 lg:gap-x-2 ">
                 <Button
                   variant="outline"
@@ -500,21 +490,6 @@ export default function NewLayout({ children }: any) {
                     )}
                   </Link>
                 </Button>
-
-                {user.isAdmin && (
-                  <Link
-                    href="https://github.com/Peppermint-Lab/peppermint/discussions"
-                    target="_blank"
-                    className="hover:cursor-pointer"
-                  >
-                    <Button
-                      variant="outline"
-                      className="text-foreground hover:cursor-pointer whitespace-nowrap"
-                    >
-                      Send Feedback
-                    </Button>
-                  </Link>
-                )}
 
                 {/* Profile dropdown */}
                 <AccountDropdown />

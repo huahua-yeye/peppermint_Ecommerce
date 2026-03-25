@@ -1,4 +1,4 @@
-import { GoogleAuth } from "google-auth-library";
+import { OAuth2Client } from "google-auth-library";
 import { prisma } from "../../prisma";
 import { EmailQueue } from "../types/email";
 
@@ -16,47 +16,52 @@ export class AuthService {
     return Buffer.from(authString).toString("base64");
   }
 
+  /** Gmail 队列 OAuth：须用 OAuth2Client + refresh_token，不能用 GoogleAuth.fromJSON（那会当成服务账号 JSON，要求 client_email） */
   static async getValidAccessToken(queue: EmailQueue): Promise<string> {
-    const { clientId, clientSecret, refreshToken, accessToken, expiresIn } =
+    const { clientId, clientSecret, refreshToken, accessToken, expiresIn, id } =
       queue;
 
-    // Check if token is still valid
-    const now = Math.floor(Date.now() / 1000);
-    if (accessToken && expiresIn && now < expiresIn) {
+    const cid = String(clientId ?? "").trim();
+    const csec = String(clientSecret ?? "").trim();
+    const rt = String(refreshToken ?? "").trim();
+    if (!cid || !csec || !rt) {
+      throw new Error(
+        "Gmail queue missing clientId, clientSecret, or refreshToken"
+      );
+    }
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    const expSec =
+      expiresIn !== undefined && expiresIn !== null
+        ? Number(expiresIn as unknown as bigint | number)
+        : 0;
+    if (accessToken && expSec && nowSec < expSec - 120) {
       return accessToken;
     }
 
-    // Initialize GoogleAuth client
-    const auth = new GoogleAuth({
-      clientOptions: {
-        clientId: clientId,
-        clientSecret: clientSecret,
+    const oauth2Client = new OAuth2Client(cid, csec);
+    oauth2Client.setCredentials({
+      refresh_token: rt,
+    });
+
+    const { token: newAccessToken } = await oauth2Client.getAccessToken();
+    if (!newAccessToken) {
+      throw new Error("Unable to refresh access token.");
+    }
+
+    const creds = oauth2Client.credentials;
+    const expirySec = creds.expiry_date
+      ? Math.floor(creds.expiry_date / 1000)
+      : nowSec + 3600;
+
+    await prisma.emailQueue.update({
+      where: { id },
+      data: {
+        accessToken: newAccessToken,
+        expiresIn: BigInt(expirySec),
       },
     });
 
-    const oauth2Client = auth.fromJSON({
-      client_id: clientId,
-      client_secret: clientSecret,
-      refresh_token: refreshToken,
-    });
-
-    // Refresh the token if expired
-    const tokenInfo = await oauth2Client.getAccessToken();
-
-    const expiryDate = expiresIn! + 3600;
-
-    if (tokenInfo.token) {
-      await prisma.emailQueue.update({
-        where: { id: queue.id },
-        data: {
-          accessToken: tokenInfo.token,
-          expiresIn: expiryDate,
-        },
-      });
-
-      return tokenInfo.token;
-    } else {
-      throw new Error("Unable to refresh access token.");
-    }
+    return newAccessToken;
   }
 }

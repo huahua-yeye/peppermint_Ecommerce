@@ -344,9 +344,10 @@ export default function Ticket() {
                   <div className="prose max-w-none">
                     <div className="">
                       {data.ticket.fromImap ? (
-                        <div className="break-words bg-white rounded-md p-4 text-black">
+                        <div className="break-words bg-white rounded-md p-4 text-black border border-border shadow-sm w-full">
                           <Frame
-                            className="min-h-[60vh] h-full w-full"
+                            className="w-full min-h-0 overflow-y-auto max-h-[min(40vh,22rem)] [&_iframe]:block [&_iframe]:!h-auto [&_iframe]:min-h-0 [&_iframe]:max-h-full"
+                            style={{ height: "auto", minHeight: 0 }}
                             initialContent={data.ticket.detail}
                           >
                             {" "}

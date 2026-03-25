@@ -481,6 +481,7 @@ function SMTP({ setStep }: { setStep: (step: number) => void }) {
         reply,
         username,
         password,
+        serviceType: "other",
       }),
     })
       .then((res) => res.json())

@@ -8,6 +8,10 @@ import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
 import moment from "moment";
 import { useUser } from "../store/session";
+import {
+  getPriorityTier,
+  priorityTierLabel,
+} from "@/shadcn/lib/utils";
 
 export default function Home() {
   const router = useRouter();
@@ -233,21 +237,38 @@ export default function Home() {
                                 </dl>
                               </td>
                               <td className="hidden px-3 py-1 text-sm text-gray-500 lg:table-cell w-[64px]">
-                                {item.priority === "Low" && (
-                                  <span className="inline-flex w-full justify-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700  ring-1 ring-inset ring-blue-600/20">
-                                    {item.priority}
-                                  </span>
-                                )}
-                                {item.priority === "Normal" && (
-                                  <span className="inline-flex items-center w-full justify-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                    {item.priority}
-                                  </span>
-                                )}
-                                {item.priority === "High" && (
-                                  <span className="inline-flex items-center w-full justify-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
-                                    {item.priority}
-                                  </span>
-                                )}
+                                {(() => {
+                                  const tier = getPriorityTier(item.priority);
+                                  const label = tier
+                                    ? priorityTierLabel(tier)
+                                    : item.priority || "—";
+                                  if (tier === "low") {
+                                    return (
+                                      <span className="inline-flex w-full justify-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
+                                        {label}
+                                      </span>
+                                    );
+                                  }
+                                  if (tier === "normal") {
+                                    return (
+                                      <span className="inline-flex items-center w-full justify-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                        {label}
+                                      </span>
+                                    );
+                                  }
+                                  if (tier === "high") {
+                                    return (
+                                      <span className="inline-flex items-center w-full justify-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
+                                        {label}
+                                      </span>
+                                    );
+                                  }
+                                  return (
+                                    <span className="inline-flex w-full justify-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/20">
+                                      {label}
+                                    </span>
+                                  );
+                                })()}
                               </td>
                               <td className="hidden px-3 py-1 text-sm text-gray-500 sm:table-cell w-[64px]">
                                 {item.isComplete === true ? (

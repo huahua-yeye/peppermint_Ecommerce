@@ -71,6 +71,44 @@ const ticketStatusMap = [
   { id: 4, value: "done", name: "Done", icon: CircleCheck },
 ];
 
+/** BlockNote 需要非空 PartialBlock[]；历史数据可能是 { content: string } 或单个 block 对象 */
+function normalizeTicketDetailToBlocks(
+  parsed: unknown
+): PartialBlock[] | undefined {
+  if (parsed == null) return undefined;
+
+  if (Array.isArray(parsed)) {
+    if (parsed.length === 0) return undefined;
+    return parsed as PartialBlock[];
+  }
+
+  if (typeof parsed === "object") {
+    const obj = parsed as Record<string, unknown>;
+
+    if (typeof obj.type === "string") {
+      return [parsed as PartialBlock];
+    }
+
+    if (typeof obj.content === "string") {
+      const text = obj.content;
+      return [
+        {
+          type: "paragraph",
+          content: text
+            ? [{ type: "text", text, styles: {} }]
+            : [],
+        } as PartialBlock,
+      ];
+    }
+
+    if (Array.isArray(obj.blocks)) {
+      return normalizeTicketDetailToBlocks(obj.blocks);
+    }
+  }
+
+  return undefined;
+}
+
 const priorityOptions = [
   {
     id: "1",
@@ -578,18 +616,22 @@ export default function Ticket() {
   }, [debouncedValue]);
 
   async function loadFromStorage() {
-    const storageString = data.ticket.detail as PartialBlock[];
-    // if (storageString && isJsonString(storageString)) {
-    //   return JSON.parse(storageString) as PartialBlock[]
-    // } else {
-    //   return undefined;
-    // }
-    try {
-      // @ts-ignore
-      return JSON.parse(storageString) as PartialBlock[];
-    } catch (e) {
-      return undefined;
+    const raw = data.ticket.detail;
+    if (raw == null || raw === "") return undefined;
+
+    if (typeof raw === "string") {
+      try {
+        return normalizeTicketDetailToBlocks(JSON.parse(raw));
+      } catch {
+        return undefined;
+      }
     }
+
+    if (typeof raw === "object") {
+      return normalizeTicketDetailToBlocks(raw);
+    }
+
+    return undefined;
   }
 
   async function convertHTML() {
@@ -603,7 +645,11 @@ export default function Ticket() {
   useEffect(() => {
     if (status === "success" && data && data.ticket) {
       loadFromStorage().then((content) => {
-        if (typeof content === "object") {
+        if (
+          content !== undefined &&
+          Array.isArray(content) &&
+          content.length > 0
+        ) {
           setInitialContent(content);
         } else {
           setInitialContent(undefined);
@@ -740,8 +786,8 @@ export default function Ticket() {
       {status === "success" && (
         <ContextMenu>
           <ContextMenuTrigger>
-            <main className="flex-1 min-h-[90vh] py-8">
-              <div className="mx-auto max-w-7xl w-full px-4 flex flex-col lg:flex-row justify-center">
+            <main className="py-8">
+              <div className="mx-auto max-w-7xl w-full px-4 flex flex-col lg:flex-row lg:items-start justify-center">
                 <div className="lg:border-r lg:pr-8 lg:w-2/3">
                   <div className="md:flex md:justify-between md:space-x-4 lg:border-b lg:pb-4">
                     <div className="w-full">
@@ -928,9 +974,10 @@ export default function Ticket() {
                         </>
                       ) : (
                         <div className="">
-                          <div className="break-words bg-white rounded-md text-black">
+                          <div className="break-words bg-white rounded-md text-black border border-border shadow-sm w-full">
                             <Frame
-                              className="min-h-[60vh] h-full max-h-[80vh] overflow-y-auto w-full"
+                              className="w-full min-h-0 overflow-y-auto max-h-[min(40vh,22rem)] [&_iframe]:block [&_iframe]:!h-auto [&_iframe]:min-h-0 [&_iframe]:max-h-full"
+                              style={{ height: "auto", minHeight: 0 }}
                               initialContent={data.ticket.detail}
                             />
                           </div>
